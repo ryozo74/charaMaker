@@ -12,9 +12,9 @@ import { generateMatrixCharacter } from './utils/matrixEngine';
 import { getHiggsfieldToken, setHiggsfieldToken } from './utils/mcpClient';
 import { Zap, Key } from 'lucide-react';
 
-const STORAGE_KEY_CHARACTERS = 'charaMaker_saved_cards_v1';
-const STORAGE_KEY_THREADS = 'charaMaker_chat_threads_v1';
-const STORAGE_KEY_ENGINE_PROVIDER = 'charaMaker_engine_provider_v1';
+const STORAGE_KEY_CHARACTERS = 'charaMaker_saved_cards_v2';
+const STORAGE_KEY_THREADS = 'charaMaker_chat_threads_v2';
+const STORAGE_KEY_ENGINE_PROVIDER = 'charaMaker_engine_provider_v2';
 
 export const App: React.FC = () => {
   const [currentView, setCurrentView] = useState<ViewMode>('chara-chat');

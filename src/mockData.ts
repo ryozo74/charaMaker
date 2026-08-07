@@ -3,52 +3,27 @@ import { generateMatrixCharacter } from './utils/matrixEngine';
 
 export const INITIAL_CHAT_THREADS: ChatThreadHistory[] = [
   {
-    id: 'thread-001',
-    title: '3.5歳 × 車 (てちてちバス)',
-    targetAge: 3.5,
-    properNoun: '車',
-    createdAt: '2026-08-06 14:20',
-    mainResult: generateMatrixCharacter(3.5, '車', '2D_Flat'),
+    id: 'thread-shark-001',
+    title: '4.0歳 × サメ (サメぽん)',
+    targetAge: 4.0,
+    properNoun: 'サメ',
+    createdAt: '2026-08-07 22:50',
+    mainResult: generateMatrixCharacter(4.0, 'サメ', '2D_Flat'),
     messages: [
       {
-        id: 'msg-1',
+        id: 'msg-shark-1',
         sender: 'user',
-        timestamp: '14:20',
-        text: '3.5歳向けに「車」をテーマにした親しみやすいキャラクターを作成して！',
-        targetAge: 3.5,
-        properNoun: '車'
+        timestamp: '22:50',
+        text: '4歳向けに「サメ」をテーマにした親しみやすいマスコットキャラクターを作成して！',
+        targetAge: 4.0,
+        properNoun: 'サメ'
       },
       {
-        id: 'msg-2',
+        id: 'msg-shark-2',
         sender: 'assistant',
-        timestamp: '14:20',
-        text: 'かしこまりました！ターゲット年齢 3.5歳（X_weight = 50% / 3-4歳モード）とモチーフ「車」のマトリクスから、キャラクター設定シートおよびメイン・3面図プロンプトを構築しました。',
-        result: generateMatrixCharacter(3.5, '車', '2D_Flat')
-      }
-    ]
-  },
-  {
-    id: 'thread-002',
-    title: '2.0歳 × パン (パンぽん)',
-    targetAge: 2.0,
-    properNoun: 'パン',
-    createdAt: '2026-08-06 14:15',
-    mainResult: generateMatrixCharacter(2.0, 'パン', '3D_Clay'),
-    messages: [
-      {
-        id: 'msg-3',
-        sender: 'user',
-        timestamp: '14:15',
-        text: '2歳児向けの「パン」のぽよりんキャラクターを作って',
-        targetAge: 2.0,
-        properNoun: 'パン'
-      },
-      {
-        id: 'msg-4',
-        sender: 'assistant',
-        timestamp: '14:15',
-        text: 'ターゲット年齢 2.0歳（X_weight = 20% / 1-2歳乳幼児モード）を適用しました。丸みのある1.2頭身と超太線・オノマトペ「パンぽん」を自動生成しました。',
-        result: generateMatrixCharacter(2.0, 'パン', '3D_Clay')
+        timestamp: '22:50',
+        text: 'ターゲット年齢 4.0歳（X_weight = 60% / 3-4歳モード）とモチーフ「サメ」から、Higgsfield 2K 高画質マスコット「サメぽん」を生成しました。',
+        result: generateMatrixCharacter(4.0, 'サメ', '2D_Flat')
       }
     ]
   }
