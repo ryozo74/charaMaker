@@ -18,46 +18,18 @@ const STORAGE_KEY_ENGINE_PROVIDER = 'charaMaker_engine_provider_v3';
 
 export const App: React.FC = () => {
   const [currentView, setCurrentView] = useState<ViewMode>('chara-chat');
-  const [tokenInput, setTokenInput] = useState<string>(getHiggsfieldToken());
-  const [showTokenModal, setShowTokenModal] = useState<boolean>(false);
-  
-  const [engineProvider, setEngineProvider] = useState<EngineProvider>(() => {
-    const localData = localStorage.getItem(STORAGE_KEY_ENGINE_PROVIDER);
-    if (localData === 'higgsfield' || localData === 'z8b_comfyui') {
-      return localData;
-    }
-    return 'higgsfield';
-  });
+  const [engineProvider, setEngineProvider] = useState<EngineProvider>('higgsfield');
+  const [threads, setThreads] = useState<ChatThreadHistory[]>([]);
+  const [characters, setCharacters] = useState<SavedCharacterCard[]>([]);
+  const [activeThreadId, setActiveThreadId] = useState<string>('default-empty-thread');
 
-  const [threads, setThreads] = useState<ChatThreadHistory[]>(() => {
-    const localData = localStorage.getItem(STORAGE_KEY_THREADS);
-    if (localData) {
-      try { return JSON.parse(localData); } catch (e) {}
-    }
-    return INITIAL_CHAT_THREADS;
-  });
-
-  const [activeThreadId, setActiveThreadId] = useState<string>(threads[0]?.id || INITIAL_CHAT_THREADS[0].id);
-
-  const [characters, setCharacters] = useState<SavedCharacterCard[]>(() => {
-    const localData = localStorage.getItem(STORAGE_KEY_CHARACTERS);
-    if (localData) {
-      try { return JSON.parse(localData); } catch (e) {}
-    }
-    return INITIAL_SAVED_CHARACTERS;
-  });
-
+  // Force purge all legacy browser localStorage history on app launch!
   useEffect(() => {
-    localStorage.setItem(STORAGE_KEY_CHARACTERS, JSON.stringify(characters));
-  }, [characters]);
-
-  useEffect(() => {
-    localStorage.setItem(STORAGE_KEY_THREADS, JSON.stringify(threads));
-  }, [threads]);
-
-  useEffect(() => {
-    localStorage.setItem(STORAGE_KEY_ENGINE_PROVIDER, engineProvider);
-  }, [engineProvider]);
+    if (typeof window !== 'undefined') {
+      localStorage.clear();
+      console.log('🧹 [charaMaker] All legacy browser localStorage history purged completely.');
+    }
+  }, []);
 
   const activeThread = threads.find(t => t.id === activeThreadId) || threads[0] || INITIAL_CHAT_THREADS[0];
 
