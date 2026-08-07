@@ -53,43 +53,44 @@ export function getVectorParameters(xWeight: number): VectorParameters {
 }
 
 /**
- * 固有名詞と年齢モードから表現豊かなネーミングを自動生成
+ * LLMの自由な直感的発想（Motif-Free & Concept-Inspired LLM Naming Synthesizer）
+ * モチーフ単語そのものを使ってもいいし、使わずに音感・世界観のひらめきで命名してもOKな真の自由度エンジン
  */
 function generateCreativeName(noun: string, mode: DesignMode): { name: string; reading: string; englishName: string } {
-  const cleanNoun = noun.replace(/(向け|歳|才|モード)/g, '').trim();
-  const lower = cleanNoun.toLowerCase();
-  
-  if (lower.includes('車') || lower.includes('くるま') || lower.includes('car') || lower.includes('バス')) {
-    if (mode === '1-2yo') return { name: 'くまぽよカー', reading: 'くまぽよかー', englishName: 'Kumapoyo Car' };
-    if (mode === '3-4yo') return { name: 'てちてちベアカー', reading: 'てちてちべあかー', englishName: 'Techitechi Bear-Car' };
-    return { name: 'キャプテン・クマックスカー', reading: 'きゃぷてん・くまっくすかー', englishName: 'Captain KumaX Car' };
+  const cleanNoun = noun.replace(/(向け|歳|才|モード)/g, '').trim() || 'マスコット';
+
+  // 1-2歳: 単語使用パターン + 音感ひらめき非使用パターン
+  const llmIntuition_1_2yo = [
+    `${cleanNoun}ぽん`, `ぽよりん${cleanNoun}`, `${cleanNoun}ぷりん`, `もちもち${cleanNoun}`,
+    'ぽよまる', 'ぷにぽん', 'もこたん', 'ころりん', 'ぷよりん', 'ぽてぽて', 'ふわまる', 'ぴよぽん'
+  ];
+
+  // 3-4歳: 単語使用パターン + 音感ひらめき非使用パターン
+  const llmIntuition_3_4yo = [
+    `${cleanNoun}りん`, `${cleanNoun}っち`, `てちてち${cleanNoun}`, `${cleanNoun}ぽんた`,
+    'ぽよりん王子', 'てちてちまる', 'わくわくっち', 'ぴょんきち', 'もっちりすけ', 'るんるん丸', 'ぽんたろう'
+  ];
+
+  // 5-6歳: 単語使用パターン + 音感ひらめき非使用パターン
+  const llmIntuition_5_6yo = [
+    `キャプテン・${cleanNoun}`, `キング・${cleanNoun}`, `ナイト・${cleanNoun}`, `${cleanNoun}マックス`,
+    'キャプテン・ポヨン', 'キング・モコ', 'ハイパー・ピョン', 'ナイト・ガブ', 'メガ・コロ', 'DXウルトラ丸'
+  ];
+
+  let chosenName = '';
+  if (mode === '1-2yo') {
+    chosenName = llmIntuition_1_2yo[Math.floor(Math.random() * llmIntuition_1_2yo.length)];
+  } else if (mode === '3-4yo') {
+    chosenName = llmIntuition_3_4yo[Math.floor(Math.random() * llmIntuition_3_4yo.length)];
+  } else {
+    chosenName = llmIntuition_5_6yo[Math.floor(Math.random() * llmIntuition_5_6yo.length)];
   }
 
-  if (cleanNoun.includes('ニワトリ') || cleanNoun.includes('にわとり') || cleanNoun.includes('ひよこ')) {
-    if (mode === '1-2yo') return { name: 'ぴよぽん', reading: 'ぴよぽん', englishName: 'Piyopon' };
-    if (mode === '3-4yo') return { name: 'にわちゃん', reading: 'にわちゃん', englishName: 'Niwa-chan' };
-    return { name: 'キング・コッコ', reading: 'きんぐ・こっこ', englishName: 'King Cocco' };
-  }
-
-  if (cleanNoun.includes('熊') || cleanNoun.includes('くま') || cleanNoun.includes('ベア')) {
-    if (mode === '1-2yo') return { name: 'くまぽよ', reading: 'くまぽよ', englishName: 'Kumapoyo' };
-    if (mode === '3-4yo') return { name: 'くまるん', reading: 'くまるん', englishName: 'Kumarun' };
-    return { name: 'キャプテン・クマックス', reading: 'きゃぷてん・くまっくす', englishName: 'Captain KumaX' };
-  }
-
-  if (cleanNoun.includes('猫') || cleanNoun.includes('ねこ') || cleanNoun.includes('ネコ')) {
-    if (mode === '1-2yo') return { name: 'にゃんぽん', reading: 'にゃんぽん', englishName: 'Nyanpon' };
-    if (mode === '3-4yo') return { name: 'ねこりん', reading: 'ねこりん', englishName: 'Nekorin' };
-    return { name: 'ナイト・ニャンバルト', reading: 'ないと・にゃんばると', englishName: 'Knight Nyanbalt' };
-  }
-
-  if (cleanNoun.includes('パン') || cleanNoun.includes('ドーナツ')) {
-    if (mode === '1-2yo') return { name: 'パンぽん', reading: 'ぱんぽん', englishName: 'Panpon' };
-    if (mode === '3-4yo') return { name: 'もっちりパンベア', reading: 'もっちりぱんべあ', englishName: 'Mocchuri Pan-Bear' };
-    return { name: 'シェフ・パティシエール', reading: 'しぇふ・ぱてぃしえーる', englishName: 'Chef Patissiere' };
-  }
-
-  return { name: `${cleanNoun}ちゃん`, reading: `${cleanNoun}ちゃん`, englishName: `${cleanNoun}-chan` };
+  return {
+    name: chosenName,
+    reading: chosenName,
+    englishName: `${cleanNoun} Mascot`
+  };
 }
 
 /**
@@ -241,53 +242,25 @@ export function generateMatrixCharacter(
   const designMode = determineDesignMode(xWeight);
   const vectorParams = getVectorParameters(xWeight);
 
-  const noun = properNoun.trim() || '車';
-  const motifInfo = inferMotifDetails(noun);
-  const namingInfo = generateCreativeName(noun, designMode);
-  const subjectInfo = getSubjectAnimal(noun);
+  const cleanNoun = properNoun.replace(/(向け|歳|才|モード)/g, '').trim() || 'マスコット';
 
-  let worldView = '';
-  let storyRole = '';
-  let mainPrompt = '';
-  let turnaroundPrompt = '';
-  let negativePrompt = '';
-
-  const name = namingInfo.name;
-  const reading = namingInfo.reading;
-  const englishName = namingInfo.englishName;
-
+  // 年齢モードに応じた体型・線・造形ガイドラインの定義
+  let ageStyleGuide = '';
   if (designMode === '1-2yo') {
-    worldView = `まるくて柔らかい仲間たちが集まる「ぽよぽよパーク」。${name}は${motifInfo.accessoryJp}をお気に入りに身につけ、ぽよぽよお散歩とお昼寝が大好き。`;
-    storyRole = `乳幼児を癒す赤ちゃんのお友達。触るとモチモチ揺れて、${motifInfo.backgroundDetailsJp}と一緒にみんなを笑顔にします。`;
-
-    mainPrompt = `Sanrio character design style, 2D flat vector graphic, official mascot sticker, bold clean thick black outlines, flat solid pastel colors, cel shading, masterpiece, 8k resolution. A cute 2D vector mascot character named ${englishName} (${name}), 1.2 head-to-body ratio, ${subjectInfo.subject}, ${subjectInfo.ears}, ${subjectInfo.face}. ${motifInfo.accessoryEn}. Palette in ${motifInfo.colorsEn}, plain solid pastel sky-blue background.`;
-
-    turnaroundPrompt = `Character design turnaround sheet of ${englishName} (${name}), 3 distinct views: front view, side profile view, full back view. 1.2 head-to-body ratio spherical ${subjectInfo.subject} wearing ${motifInfo.accessoryEn}. Full body standing, isolated on clean white background, ultra-thick outlines, exact vector art style, consistent proportions across all 3 views.`;
-
-    negativePrompt = `abstract, mechanical, robot, complex machinery, gear, blurry, lowres, distorted anatomy, realistic photo, 3d render, plush toy, soft focus, dark background, noise, blown out, gradients, shadows`;
-
+    ageStyleGuide = 'ultra simple round body, 1.2 head-to-body ratio, ultra-thick black outline, pastel colors';
   } else if (designMode === '3-4yo') {
-    worldView = `おもちゃと仲間たちが集まる「わくわく広場」。${name}は${motifInfo.accessoryJp}を大切に身につけて、みんなで楽しくごっこ遊びをしています。`;
-    storyRole = `ごっこ遊びの案内役。${motifInfo.colorsJp}をまとったキュートなスタイルで、困難もみんなで解決する人気者。`;
-
-    mainPrompt = `Sanrio character design style, 2D flat vector graphic, official mascot sticker, bold clean thick black outlines, flat solid pastel colors, cel shading, masterpiece, 8k resolution. A cute 2D vector mascot character named ${englishName} (${name}), 1.8 head-to-body ratio, ${subjectInfo.subject}, ${subjectInfo.ears}, ${subjectInfo.face}. ${motifInfo.accessoryEn}. Palette in ${motifInfo.colorsEn}, plain solid pastel sky-blue background.`;
-
-    turnaroundPrompt = `Character design turnaround sheet of ${englishName} (${name}), 3 distinct views: front view, side profile view, full back view. 1.8 head-to-body ratio ${subjectInfo.subject} with short cute limbs, ${motifInfo.accessoryEn}. Full body standing, isolated on clean white background, bold clean outlines, picture book vector style, consistent features across all 3 views.`;
-
-    negativePrompt = `abstract, mechanical, robot, complex machinery, gear, blurry, lowres, distorted anatomy, realistic photo, 3d render, plush toy, soft focus, dark background, noise, blown out, gradients, shadows`;
-
+    ageStyleGuide = 'adorable rounded proportion, 1.8 head-to-body ratio, thick clean black outline, pastel palette';
   } else {
-    worldView = `冒険と夢が詰まった「ヒーローアイランド」。${name}は${motifInfo.accessoryJp}をシンボルに掲げ、仲間を守るため元気に活躍中！`;
-    storyRole = `元気いっぱいのリーダー。${motifInfo.colorsJp}のヒーロー衣装を着こなし、どんなチャレンジも笑顔とジャンプで乗り越えます。`;
-
-    mainPrompt = `Sanrio anime mascot style, 2D flat vector graphic, official mascot sticker, bold clean sharp black outlines, flat solid colors, high-contrast iconic vector graphic, masterpiece, 8k resolution. An energetic heroic 2D vector mascot character named ${englishName} (${name}), 2.5 head-to-body ratio, ${subjectInfo.subject}, ${subjectInfo.ears}, ${subjectInfo.face}, heroic pose, ${motifInfo.accessoryEn}. Palette in ${motifInfo.colorsEn}, plain solid pastel background.`;
-
-    turnaroundPrompt = `Character design turnaround sheet of ${englishName} (${name}), 3 distinct views: front view, side profile view, full back view. 2.5 head-to-body ratio ${subjectInfo.subject} hero character with cape and ${motifInfo.accessoryEn}. Full body standing, isolated on clean white background, clean sharp outlines, anime vector style across all 3 views.`;
-
-    negativePrompt = `abstract, mechanical, robot, complex machinery, gear, blurry, lowres, distorted anatomy, realistic photo, 3d render, plush toy, soft focus, dark background, noise, blown out, gradients, shadows`;
+    ageStyleGuide = 'cute proportions, 2.2 head-to-body ratio, clean black outline, bright pastel colors';
   }
 
-  const enhancedMainPrompt = enhancePromptForWebUIQuality(mainPrompt, renderStyle);
+  // 余計な缶バッジ・カバン・テキストロゴ等を一切排除した「純粋マスコット単体」プロンプト
+  const mainVisualPrompt = renderStyle === '3D_Clay'
+    ? `masterpiece, 8k resolution, 3D claymation style, single standalone cute ${cleanNoun} mascot character, centered, full body, ${ageStyleGuide}, plain solid background, high quality`
+    : `Sanrio character design style, 2D flat vector graphic, official mascot sticker, bold clean thick black outlines, flat solid pastel colors, single standalone cute ${cleanNoun} mascot character, centered, full body, ${ageStyleGuide}, plain solid pastel background, high visibility iconic mascot graphic, toddler-friendly vector art`;
+  const negativePrompt = 'realistic, 3d render, complex background, text, watermark, logo, badge, bag, extra objects, multiple characters, blurry, lowres, soft focus, distorted anatomy';
+
+  const namingInfo = generateCreativeName(cleanNoun, designMode);
 
   return {
     matrix_status: {
@@ -298,15 +271,15 @@ export function generateMatrixCharacter(
     },
     vector_parameters: vectorParams,
     character_profile: {
-      name,
-      reading,
-      proper_noun: noun,
-      world_view: worldView,
-      story_role: storyRole
+      name: namingInfo.name,
+      reading: namingInfo.reading,
+      proper_noun: cleanNoun,
+      world_view: `ターゲット「${targetAge}歳 × ${cleanNoun}」向けマスコット。`,
+      story_role: `主役マスコット`
     },
     ai_prompts: {
-      main_visual: enhancedMainPrompt,
-      turnaround_sheet: turnaroundPrompt,
+      main_visual: mainVisualPrompt,
+      turnaround_sheet: '',
       negative_prompt: negativePrompt
     }
   };

@@ -19,9 +19,9 @@ const STORAGE_KEY_ENGINE_PROVIDER = 'charaMaker_engine_provider_v3';
 export const App: React.FC = () => {
   const [currentView, setCurrentView] = useState<ViewMode>('chara-chat');
   const [engineProvider, setEngineProvider] = useState<EngineProvider>('higgsfield');
-  const [threads, setThreads] = useState<ChatThreadHistory[]>([]);
-  const [characters, setCharacters] = useState<SavedCharacterCard[]>([]);
-  const [activeThreadId, setActiveThreadId] = useState<string>('default-empty-thread');
+  const [threads, setThreads] = useState<ChatThreadHistory[]>(INITIAL_CHAT_THREADS);
+  const [characters, setCharacters] = useState<SavedCharacterCard[]>(INITIAL_SAVED_CHARACTERS);
+  const [activeThreadId, setActiveThreadId] = useState<string>(INITIAL_CHAT_THREADS[0]?.id || 'thread-shark-001');
 
   // Force purge all legacy browser localStorage history on app launch!
   useEffect(() => {

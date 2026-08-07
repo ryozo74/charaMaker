@@ -1,4 +1,4 @@
-import React, { useState } from 'react';
+import React, { useState, useRef, useEffect } from 'react';
 import { ChatThreadHistory, SavedCharacterCard, RenderStyle, EngineProvider } from '../types';
 import { Send, User, Bot, Sparkles, Copy, Save, Check, Download, Zap, RefreshCw, Eye, X } from 'lucide-react';
 import { generateMatrixCharacter, parseNaturalLanguageInput } from '../utils/matrixEngine';
@@ -28,6 +28,16 @@ export const CharaChatApp: React.FC<CharaChatAppProps> = ({
   const [mcpStatusMessage, setMcpStatusMessage] = useState<string | null>(null);
   const [autoAccept, setAutoAccept] = useState<boolean>(true);
   const [previewImageUrl, setPreviewImageUrl] = useState<string | null>(null);
+
+  const messagesEndRef = useRef<HTMLDivElement>(null);
+
+  const scrollToBottom = () => {
+    messagesEndRef.current?.scrollIntoView({ behavior: 'smooth' });
+  };
+
+  useEffect(() => {
+    scrollToBottom();
+  }, [currentThread?.messages, generatingMsgId, mcpStatusMessage]);
 
   const QUICK_PROMPTS = [
     '3.5歳向け 車',
@@ -80,6 +90,7 @@ export const CharaChatApp: React.FC<CharaChatAppProps> = ({
     const assistantMsgId = `msg-${Date.now()}-assistant`;
     onSendMessage(textToSend, parsed.age, parsed.noun, parsed.renderStyle, assistantMsgId);
     setInputText('');
+    setTimeout(scrollToBottom, 50);
 
     if (autoAccept) {
       const generatedResult = generateMatrixCharacter(parsed.age, parsed.noun, parsed.renderStyle);
@@ -93,6 +104,7 @@ export const CharaChatApp: React.FC<CharaChatAppProps> = ({
     const parsed = parseNaturalLanguageInput(promptText);
     const assistantMsgId = `msg-${Date.now()}-assistant`;
     onSendMessage(promptText, parsed.age, parsed.noun, parsed.renderStyle, assistantMsgId);
+    setTimeout(scrollToBottom, 50);
 
     if (autoAccept) {
       const generatedResult = generateMatrixCharacter(parsed.age, parsed.noun, parsed.renderStyle);
@@ -359,29 +371,12 @@ export const CharaChatApp: React.FC<CharaChatAppProps> = ({
                       {msg.result?.ai_prompts.main_visual}
                     </code>
                   </div>
-
-                  {/* 3-Turnaround Sheet Prompt */}
-                  <div style={{ background: 'rgba(0,0,0,0.3)', padding: '12px', borderRadius: 'var(--radius-sm)', border: '1px solid var(--border-glass)' }}>
-                    <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', marginBottom: '6px' }}>
-                      <span style={{ fontSize: '0.8rem', fontWeight: 700, color: 'var(--accent-purple)' }}>📐 3面図プロンプト (Turnaround Sheet)</span>
-                      <button
-                        type="button"
-                        onClick={() => handleCopyPrompt(`${msg.id}-turnaround`, msg.result?.ai_prompts.turnaround_sheet || '')}
-                        style={{ background: 'transparent', border: 'none', color: 'var(--text-muted)', cursor: 'pointer', display: 'flex', alignItems: 'center', gap: '4px', fontSize: '0.75rem' }}
-                      >
-                        {copiedId === `${msg.id}-turnaround` ? <Check size={13} color="var(--accent-emerald)" /> : <Copy size={13} />}
-                        <span>{copiedId === `${msg.id}-turnaround` ? 'コピー完了' : 'コピー'}</span>
-                      </button>
-                    </div>
-                    <code style={{ fontSize: '0.8rem', color: '#e2e8f0', display: 'block', wordBreak: 'break-word', fontFamily: 'monospace' }}>
-                      {msg.result?.ai_prompts.turnaround_sheet}
-                    </code>
-                  </div>
                 </div>
               </div>
             ) : null}
           </div>
         ))}
+        <div ref={messagesEndRef} />
       </div>
 
       {/* Fullscreen Image Preview Modal */}
