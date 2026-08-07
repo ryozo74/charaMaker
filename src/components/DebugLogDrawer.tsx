@@ -4,7 +4,7 @@ import { Terminal, Trash2, ChevronUp, ChevronDown, CheckCircle, AlertTriangle, X
 
 export const DebugLogDrawer: React.FC = () => {
   const [logs, setLogs] = useState<DebugLogEntry[]>([]);
-  const [isOpen, setIsOpen] = useState<boolean>(true);
+  const [isOpen, setIsOpen] = useState<boolean>(false);
 
   useEffect(() => {
     const unsubscribe = subscribeDebugLogs(setLogs);
