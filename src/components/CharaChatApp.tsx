@@ -39,19 +39,19 @@ export const CharaChatApp: React.FC<CharaChatAppProps> = ({
 
   const triggerMCPGen = async (msgId: string, result: any) => {
     setGeneratingMsgId(msgId);
-    const providerLabel = engineProvider === 'higgsfield' ? '🍌 Higgsfield (nano_banana_flash)' : '⚡ z8b (192.168.44.120:9000)';
-    setMcpStatusMessage(`${providerLabel} で自動レンダリング中...`);
+    const providerLabel = engineProvider === 'higgsfield' ? '🍌 Higgsfield 2K高画質' : '⚡ 高画質GPU';
+    setMcpStatusMessage(`${providerLabel} でイラストを生成中...`);
 
     const res = await callMcpByProvider(engineProvider, {
       positivePrompt: result.ai_prompts.main_visual,
       turnaroundPrompt: result.ai_prompts.turnaround_sheet,
       negativePrompt: result.ai_prompts.negative_prompt,
-      model: engineProvider === 'higgsfield' ? 'nano_banana_flash' : 'sd3.5_large_fp8_scaled.safetensors'
+      model: engineProvider === 'higgsfield' ? 'nano_banana_2' : 'sd3.5_large_fp8_scaled.safetensors'
     });
 
     setGeneratingMsgId(null);
-    setMcpStatusMessage(res.message || `${providerLabel} レンダリング完了`);
-    setTimeout(() => setMcpStatusMessage(null), 5000);
+    setMcpStatusMessage(res.success ? `✨ イラストの生成が完了しました` : '生成処理中...');
+    setTimeout(() => setMcpStatusMessage(null), 4000);
 
     if (res.success && res.imageUrl) {
       if (onUpdateMessageImage) {
