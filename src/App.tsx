@@ -202,30 +202,6 @@ export const App: React.FC = () => {
               </button>
             </div>
 
-            {/* Token Management Button */}
-            {engineProvider === 'higgsfield' && (
-              <button
-                type="button"
-                onClick={() => setShowTokenModal(true)}
-                style={{
-                  background: 'rgba(234, 179, 8, 0.15)',
-                  border: '1px solid rgba(234, 179, 8, 0.4)',
-                  color: '#fef08a',
-                  padding: '5px 10px',
-                  borderRadius: '8px',
-                  fontSize: '0.75rem',
-                  fontWeight: 600,
-                  cursor: 'pointer',
-                  display: 'flex',
-                  alignItems: 'center',
-                  gap: '4px'
-                }}
-              >
-                <Key size={12} />
-                API Key/Token
-              </button>
-            )}
-
             <div style={{ height: '16px', width: '1px', background: 'rgba(255, 255, 255, 0.1)' }} />
 
             <div style={{ display: 'flex', alignItems: 'center', gap: '6px', fontSize: '0.75rem', color: '#94a3b8' }}>
@@ -234,31 +210,6 @@ export const App: React.FC = () => {
             </div>
           </div>
         </header>
-
-        {/* Modal for Setting Token */}
-        {showTokenModal && (
-          <div style={{ position: 'fixed', inset: 0, background: 'rgba(0,0,0,0.7)', zIndex: 100, display: 'flex', alignItems: 'center', justifyContent: 'center', padding: '20px' }}>
-            <div className="glass-panel" style={{ width: '460px', padding: '24px', background: '#0d111d', border: '1px solid rgba(255,255,255,0.15)' }}>
-              <h3 style={{ fontSize: '1.1rem', fontWeight: 700, marginBottom: '8px' }} className="gradient-text">
-                Higgsfield API Key / Token 設定
-              </h3>
-              <p style={{ fontSize: '0.82rem', color: '#94a3b8', marginBottom: '16px', lineHeight: '1.5' }}>
-                cloud.higgsfield.ai から取得した API Key（<code>key:secret</code>）または F12 で抽出した Bearer Token を設定してください。
-              </p>
-              <input
-                type="text"
-                value={tokenInput}
-                onChange={e => setTokenInput(e.target.value)}
-                placeholder="例: 07c1df60-63f3... または key_xxx:secret_yyy"
-                style={{ width: '100%', background: 'rgba(0,0,0,0.4)', border: '1px solid rgba(255,255,255,0.2)', borderRadius: '8px', padding: '10px 14px', color: '#fff', fontSize: '0.85rem', marginBottom: '16px', outline: 'none' }}
-              />
-              <div style={{ display: 'flex', justifyContent: 'flex-end', gap: '8px' }}>
-                <button className="btn-secondary" onClick={() => setShowTokenModal(false)}>キャンセル</button>
-                <button className="btn-primary" onClick={handleSaveToken}>保存する</button>
-              </div>
-            </div>
-          </div>
-        )}
 
         {/* View Switcher Container */}
         <main style={{ flex: 1, height: 'calc(100vh - 60px)', overflow: 'hidden', position: 'relative' }}>
