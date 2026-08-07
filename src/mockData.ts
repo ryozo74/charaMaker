@@ -56,25 +56,11 @@ export const INITIAL_CHAT_THREADS: ChatThreadHistory[] = [
 
 export const INITIAL_SAVED_CHARACTERS: SavedCharacterCard[] = [
   {
-    id: 'chara-001',
-    result: generateMatrixCharacter(3.5, '車', '2D_Flat'),
-    imageUrl: '/outputs/task_6adfe5670057.png',
-    createdAt: '2026-08-06 14:20',
+    id: 'chara-shark-001',
+    result: generateMatrixCharacter(4.0, 'サメ', '2D_Flat'),
+    imageUrl: 'https://d8j0ntlcm91z4.cloudfront.net/user_3FnkCNpYwkVwIsfR6VJe9XctKRi/hf_20260807_102234_06cd2b2c-69d3-4b81-8761-cd7e12adfdc3.png',
+    createdAt: '2026-08-07 22:50',
     isFavorite: true
-  },
-  {
-    id: 'chara-002',
-    result: generateMatrixCharacter(2.0, 'パン', '3D_Clay'),
-    imageUrl: '/outputs/task_0d48b65db3a0.png',
-    createdAt: '2026-08-06 14:15',
-    isFavorite: true
-  },
-  {
-    id: 'chara-003',
-    result: generateMatrixCharacter(5.5, 'ドーナツ', '2D_Flat'),
-    imageUrl: '/outputs/task_bece06d24a76.png',
-    createdAt: '2026-08-06 14:10',
-    isFavorite: false
   }
 ];
 
