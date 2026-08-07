@@ -94,10 +94,7 @@ export const App: React.FC = () => {
     setCharacters(prev => prev.filter(c => c.id !== id));
   };
 
-  const handleSaveToken = () => {
-    setHiggsfieldToken(tokenInput);
-    setShowTokenModal(false);
-  };
+
 
   return (
     <div style={{ display: 'flex', width: '100vw', height: '100vh', overflow: 'hidden', background: '#090c15', color: '#f0f4fc' }}>
