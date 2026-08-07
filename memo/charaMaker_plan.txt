@@ -1,0 +1,58 @@
+【開発指示書】ターゲット年齢×固有名詞連携 キャラクター自動生成＆マトリクス管理システム1. システム概要と目的本システムは、ユーザーが指定した「ターゲット年齢（年齢ウェイト）」と「固有名詞（原案モチーフ）」を入力パラメータとし、1〜6歳児向けデザイン理論（6大ベクトル×XYZ軸マトリクス）に基づいて、キャラクター設定・世界観・AI生成プロンプト（メイン画像/3面図）をブレなく自動生成するエンジンである。2. システム入出力仕様（Input / Output）【入力（Input）】JSON{
+  "target_age": 2.5,          // 1.0 〜 6.0（歳数。小数の入力も可）
+  "proper_noun": "ドーナツ",  // モチーフとなる固有名詞（名詞、単語）
+  "render_style": "2D_Flat"   // "2D_Flat" または "3D_Clay" （Z軸指定。オプション）
+}
+【出力（Output）】マトリクス座標 ＆ 6大ベクトルパラメータ（内部用データ）キャラクター設定シート（名前・世界観・ストーリー・役割）AI画像生成用プロンプトセット（メイン画像プロンプト、3面図プロンプト、ネガティブプロンプト）3. コア変換ロジック（マトリクスエンジン）システム内部で target_age を 「X軸（年齢ウェイト / 0〜100%）」 に正規化変換し、各ベクトルと固有名詞の変換テーブルを適用する。① 年齢（target_age） ➔ X軸座標（X_weight）の変換式$$\text{X\_weight (\%)} = \frac{\text{target\_age} - 1.0}{6.0 - 1.0} \times 100$$(例: 1歳 ➔ 0%、2.5歳 ➔ 30%、3.5歳 ➔ 50%、6歳 ➔ 100%)② X軸に基づく「6大ベクトル」パラメータ変換ルール制御ベクトルX: 0〜30%（1〜2歳）X: 31〜70%（3〜4歳）X: 71〜100%（5〜6歳）1. 幾何学・頭身1.2〜1.5頭身 / 完全球体・円ベース / 手足一体型1.8〜2.0頭身 / 丸みのある楕円 / 手足分離2.2〜2.5頭身 / アクション可能なシルエット2. 色彩・輪郭超太線（Ultra Thick Line） / 2〜3色 / 原色・パステル太線（Bold Line） / 3〜4色 / 明るいパステル中太線（Clean Line） / 4〜5色 / 差し色・模様追加3. 顔構造顔下部30%にパーツ集中 / 点目・離れ目 / 歯なし顔下部40%にパーツ配置 / 光ドット目顔中央にパーツ配置 / 表情・眉毛・キラキラ目4. モチーフ抽象度超抽象・質感（もちもち、丸、しずく）ハイブリッド・具象結合（被り物、合体）役割・道具・衣装付き（服、マント、職業）5. ネーミング・描画オノマトペ・2音反復 / 3ステップ描画愛称・組み合わせ名 / 4〜5ステップ描画肩書・役職付き名前 / 5〜7ステップ描画6. 動き・ポーズぽよん・受け身・揺れる（静的な可愛さ）首かしげ・ちょこんと座るジャンプ・決めポーズ（動的な躍動感）③ X軸（年齢ウェイト）× 固有名詞の言語変換ルール入力された proper_noun（例: 「ドーナツ」）を、年齢ウェイトに合わせてネーミングとモチーフの抽象度に自動変換する。Plaintext・X: 0〜30% (1〜2歳)  ➔ 【オノマトペ/感性変換】: 「ポヨン」「輪っか」「もっち」
+・X: 31〜70% (3〜4歳) ➔ 【ハイブリッド/愛称変換】: 「ドーナツちゃん」「ドーナツベア」
+・X: 71〜100% (5〜6歳) ➔ 【ストーリー/肩書変換】: 「キャプテン・ドーナツ」「ドーナツ騎士」
+4. システム処理フロー（処理パイプライン）Plaintext[1. 入力受付] ➔ [2. X軸ウェイト算出] ➔ [3. 固有名詞変換] ➔ [4. プロンプト生成] ➔ [5. JSON出力]
+ (Age, Noun)     (X: 0~100%計算)       (ネーミング/世界観)     (Positive/Negative)    (完全構造化)
+Input: target_age = 2.0, proper_noun = "パン" を受け取る。Matrix Calc: X_weight = 20%（乳幼児・感性領域）と算出。Logic Apply:頭身：1.2頭身名前：「パンぽん」（オノマトペ＋丸形）モチーフ：丸いもちもちパン（抽象度強め）輪郭線：極太線Prompt Building: パラメータをあらかじめ定義したテンプレート（JSON/Jinja2等）に埋め込み、英語プロンプト化。Output: 最終JSONオブジェクトを出力。5. AI（LLM）実装用 システムプロンプト・テンプレート本システムをLLM（ChatGPT, Claude, 独自API等）で動かすための内部プロンプト指示文です。Plaintext[SYSTEM PROMPT]
+あなたは「未就学児向けキャラクターマトリクス設計エンジン」です。
+ユーザーから {{target_age}} と {{proper_noun}} を受け取り、以下のロジックに従ってキャラクター設定と画像生成プロンプト（FLUX/Ideogram用）をJSONで出力してください。
+
+■ マトリクス計算ルール
+- X_weight = (target_age - 1) / 5 * 100
+- X <= 30: 【1-2歳モード】1.2頭身, 超太線, 2-3色, 顔パーツ低い位置, 点目, オノマトペ名, もちもち抽象質感
+- 30 < X <= 70: 【3-4歳モード】1.8頭身, 太線, 3-4色, モチーフ合体(被り物/アイテム), 愛称名, ぬいぐるみ/粘土質感
+- X > 70: 【5-6歳モード】2.5頭身, 中太線, 4-5色, 役割・衣装・決めポーズ, ヒーロー/キャプテン名
+
+■ 出力JSONフォーマット（厳密に以下のキーで出力すること）
+{
+  "matrix_status": {
+    "target_age": float,
+    "x_weight_percent": float,
+    "design_mode": "1-2yo" | "3-4yo" | "5-6yo"
+  },
+  "character_profile": {
+    "name": "日本語名",
+    "reading": "ひらがな読み",
+    "world_view": "世界観の説明（100文字程度）",
+    "story_role": "キャラクターの役割"
+  },
+  "ai_prompts": {
+    "main_visual": "英語プロンプト",
+    "turnaround_sheet": "3面図英語プロンプト",
+    "negative_prompt": "ネガティブプロンプト"
+  }
+}
+6. テストケース（動作検証例）入力データtarget_age: 3.5 （X_weight = 50% ➔ 3〜4歳ハイブリッドモード）proper_noun: "車（ブーブー）"システム出力例（JSON）JSON{
+  "matrix_status": {
+    "target_age": 3.5,
+    "x_weight_percent": 50.0,
+    "design_mode": "3-4yo"
+  },
+  "character_profile": {
+    "name": "てちてちバス",
+    "reading": "てちてちばす",
+    "world_view": "たまごとおもちゃの乗り物が一緒に暮らす『のりもの公園』。みんなを背中に乗せてトコトコ走るよ。",
+    "story_role": "ごっこ遊びの案内役。迷子を乗せて目的地まで送ってくれる優しいお友達。"
+  },
+  "ai_prompts": {
+    "main_visual": "A cute mascot character named Techitechi Bus, 1.8 head-to-body ratio, smooth rounded egg-shaped toy bus with short cute walking legs. Bright orange and white pastel color palette, simple large black dot eyes on the windshield face, happy open smiling mouth, subtle blush. Japanese picture book illustration style, bold thick clean black outlines, bright flat green pastel background, high visibility vector graphic, adorable for 3-4 years old toddlers.",
+    "turnaround_sheet": "Character design turnaround sheet of Techitechi Bus, 3 views: front view, side view, back view. 1.8 head-to-body ratio, egg-shaped toy bus mascot with walking legs, orange color scheme. Full body, plain solid white background, bold thick clean outlines, vector art style, consistent features.",
+    "negative_prompt": "realistic, 3d render, sharp edges, dark shadows, scary, realistic car anatomy, metallic texture, complex background, text, watermark"
+  }
+}
+7. 今後の拡張開発要件（フェーズ2）画像生成API（FLUX/Ideogram API）とのダイレクト連携生成されたプロンプトをそのまま画像生成APIへリクエストし、プレビュー画像をダッシュボードに自動表示する。データベース（DB）へのマトリクス蓄積生成されたキャラの「座標 (X, Y, Z)」と「プロンプト」をDBに保存し、同一座標内でのデザイン被りを防止・分散させる「ポジショニング重複チェック機能」の実装。
